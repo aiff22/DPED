@@ -215,7 +215,7 @@ with tf.Graph().as_default(), tf.Session() as sess:
             logs.close()
 
             # save visual results for several test image crops
-            
+
             enhanced_crops = sess.run(enhanced, feed_dict={phone_: test_crops, dslr_: dslr_images, adv_: all_zeros})
 
             idx = 0
@@ -227,7 +227,11 @@ with tf.Graph().as_default(), tf.Session() as sess:
             train_loss_gen = 0.0
             train_acc_discrim = 0.0
 
+            # save the model that corresponds to the current iteration
+
             saver.save(sess, 'models/' + str(phone) + '_iteration_' + str(i) + '.ckpt', write_meta_graph=False)
+
+            # reload a different batch of training data
 
             del train_data
             del train_answ
