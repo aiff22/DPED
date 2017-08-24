@@ -157,7 +157,7 @@ What if I get an error: "OOM when allocating tensor with shape [...]"?
 ```
 @inproceedings{ignatov2017dslr,
   title={DSLR-Quality Photos on Mobile Devices with Deep Convolutional Networks},
-  author={Andrey, Ignatov and Nikolay, Kobyshev and Radu, Timofte and Kenneth, Vanhoey and Luc, Van Gool},
+  author={Ignatov, Andrey and Kobyshev, Nikolay and Timofte, Radu and Vanhoey, Kenneth and Van Gool, Luc},
   booktitle={Proceedings of the IEEE international conference on computer vision},
   year={2017}
 }
