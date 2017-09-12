@@ -21,7 +21,7 @@ any type of digital camera. More visual results can be found [here](http://peopl
 
 #### 3. First steps
 
-- Download the pre-trained [VGG-19 model](http://www.vlfeat.org/matconvnet/models/imagenet-vgg-verydeep-19.mat) and put it into `vgg_pretrained/` folder
+- Download the pre-trained [VGG-19 model](https://drive.google.com/file/d/0BwOLOmqkYj-jMGRwaUR2UjhSNDQ/view?usp=sharing) and put it into `vgg_pretrained/` folder
 - Download [DPED dataset](http://people.ee.ethz.ch/~ihnatova/#dataset) (patches for CNN training) and extract it into `dped/` folder.  
 <sub>This folder should contain three subolders: `sony/`, `iphone/` and `blackberry/`</sub>
 
