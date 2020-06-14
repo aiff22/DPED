@@ -6,7 +6,7 @@
 
 <br/>
 
-#### 1. Overview [[paper]](https://arxiv.org/pdf/1704.02470.pdf) [[project webpage]](http://people.ee.ethz.ch/~ihnatova/) [[enhancing RAW photos]](https://github.com/aiff22/PyNET)
+#### 1. Overview [[Paper]](https://arxiv.org/pdf/1704.02470.pdf) [[Project webpage]](http://people.ee.ethz.ch/~ihnatova/) [[Enhancing RAW photos]](https://github.com/aiff22/PyNET) [[Rendering Bokeh Effect]](https://github.com/aiff22/PyNET-Bokeh)
 
 The provided code implements the paper that presents an end-to-end deep learning approach for translating ordinary photos from smartphones into DSLR-quality images. The learned model can be applied to photos of arbitrary resolution, while the methodology itself is generalized to 
 any type of digital camera. More visual results can be found [here](http://people.ee.ethz.ch/~ihnatova/#demo).
@@ -14,8 +14,8 @@ any type of digital camera. More visual results can be found [here](http://peopl
 
 #### 2. Prerequisites
 
-- Python + scipy, numpy packages
-- [TensorFlow (>=1.0.1)](https://www.tensorflow.org/install/) + [CUDA CuDNN](https://developer.nvidia.com/cudnn)
+- Python + Pillow, scipy, numpy, imageio packages
+- [TensorFlow 1.x / 2.x](https://www.tensorflow.org/install/) + [CUDA CuDNN](https://developer.nvidia.com/cudnn)
 - Nvidia GPU
 
 
@@ -74,6 +74,7 @@ Optional parameters:
 >```test_subset```: **```full```**,**```small```**  &nbsp; - &nbsp; all 29 or only 5 test images will be processed <br/>
 >```resolution```: **```orig```**,**```high```**,**```medium```**,**```small```**,**```tiny```** &nbsp; - &nbsp; the resolution of the test images [**```orig```** means original resolution]<br/>
 >```use_gpu```: **```true```**,**```false```** &nbsp; - &nbsp; run models on GPU or CPU <br/>
+>```dped_dir```: **```dped/```** &nbsp; - &nbsp; path to the folder with DPED dataset <br/>
 
 Example:
 
@@ -101,6 +102,7 @@ Optional parameters:
 >```resolution```: **```orig```**,**```high```**,**```medium```**,**```small```**,**```tiny```** &nbsp; - &nbsp; the resolution of the test 
 images [**```orig```** means original resolution]<br/>
 >```use_gpu```: **```true```**,**```false```** &nbsp; - &nbsp; run models on GPU or CPU <br/>
+>```dped_dir```: **```dped/```** &nbsp; - &nbsp; path to the folder with DPED dataset <br/>  
 
 Example:
 
@@ -158,7 +160,8 @@ What if I get an error: "OOM when allocating tensor with shape [...]"?
 @inproceedings{ignatov2017dslr,
   title={DSLR-Quality Photos on Mobile Devices with Deep Convolutional Networks},
   author={Ignatov, Andrey and Kobyshev, Nikolay and Timofte, Radu and Vanhoey, Kenneth and Van Gool, Luc},
-  booktitle={Proceedings of the IEEE international conference on computer vision},
+  booktitle={Proceedings of the IEEE International Conference on Computer Vision},
+  pages={3277--3285},
   year={2017}
 }
 ```
