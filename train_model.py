@@ -1,9 +1,11 @@
 # python train_model.py model={iphone,sony,blackberry} dped_dir=dped vgg_dir=vgg_pretrained/imagenet-vgg-verydeep-19.mat
 
 import tensorflow as tf
-from scipy import misc
+import imageio
 import numpy as np
 import sys
+
+tf.compat.v1.disable_v2_behavior()
 
 from load_dataset import load_test_data, load_batch
 from ssim import MultiScaleSSIM
@@ -25,32 +27,19 @@ dped_dir, vgg_dir, eval_step = utils.process_command_args(sys.argv)
 
 np.random.seed(0)
 
-# loading training and test data
-
-print("Loading test data...")
-test_data, test_answ = load_test_data(phone, dped_dir, PATCH_SIZE)
-print("Test data was loaded\n")
-
-print("Loading training data...")
-train_data, train_answ = load_batch(phone, dped_dir, train_size, PATCH_SIZE)
-print("Training data was loaded\n")
-
-TEST_SIZE = test_data.shape[0]
-num_test_batches = int(test_data.shape[0]/batch_size)
-
 # defining system architecture
 
-with tf.Graph().as_default(), tf.Session() as sess:
+with tf.Graph().as_default(), tf.compat.v1.Session() as sess:
     
     # placeholders for training data
 
-    phone_ = tf.placeholder(tf.float32, [None, PATCH_SIZE])
+    phone_ = tf.compat.v1.placeholder(tf.float32, [None, PATCH_SIZE])
     phone_image = tf.reshape(phone_, [-1, PATCH_HEIGHT, PATCH_WIDTH, 3])
 
-    dslr_ = tf.placeholder(tf.float32, [None, PATCH_SIZE])
+    dslr_ = tf.compat.v1.placeholder(tf.float32, [None, PATCH_SIZE])
     dslr_image = tf.reshape(dslr_, [-1, PATCH_HEIGHT, PATCH_WIDTH, 3])
 
-    adv_ = tf.placeholder(tf.float32, [None, 1])
+    adv_ = tf.compat.v1.placeholder(tf.float32, [None, 1])
 
     # get processed enhanced image
 
@@ -73,7 +62,7 @@ with tf.Graph().as_default(), tf.Session() as sess:
 
     discrim_target = tf.concat([adv_, 1 - adv_], 1)
 
-    loss_discrim = -tf.reduce_sum(discrim_target * tf.log(tf.clip_by_value(discrim_predictions, 1e-10, 1.0)))
+    loss_discrim = -tf.reduce_sum(discrim_target * tf.compat.v1.log(tf.clip_by_value(discrim_predictions, 1e-10, 1.0)))
     loss_texture = -loss_discrim
 
     correct_predictions = tf.equal(tf.argmax(discrim_predictions, 1), tf.argmax(discrim_target, 1))
@@ -118,16 +107,29 @@ with tf.Graph().as_default(), tf.Session() as sess:
 
     # optimize parameters of image enhancement (generator) and discriminator networks
 
-    generator_vars = [v for v in tf.global_variables() if v.name.startswith("generator")]
-    discriminator_vars = [v for v in tf.global_variables() if v.name.startswith("discriminator")]
+    generator_vars = [v for v in tf.compat.v1.global_variables() if v.name.startswith("generator")]
+    discriminator_vars = [v for v in tf.compat.v1.global_variables() if v.name.startswith("discriminator")]
 
-    train_step_gen = tf.train.AdamOptimizer(learning_rate).minimize(loss_generator, var_list=generator_vars)
-    train_step_disc = tf.train.AdamOptimizer(learning_rate).minimize(loss_discrim, var_list=discriminator_vars)
+    train_step_gen = tf.compat.v1.train.AdamOptimizer(learning_rate).minimize(loss_generator, var_list=generator_vars)
+    train_step_disc = tf.compat.v1.train.AdamOptimizer(learning_rate).minimize(loss_discrim, var_list=discriminator_vars)
 
-    saver = tf.train.Saver(var_list=generator_vars, max_to_keep=100)
+    saver = tf.compat.v1.train.Saver(var_list=generator_vars, max_to_keep=100)
 
     print('Initializing variables')
-    sess.run(tf.global_variables_initializer())
+    sess.run(tf.compat.v1.global_variables_initializer())
+
+    # loading training and test data
+
+    print("Loading test data...")
+    test_data, test_answ = load_test_data(phone, dped_dir, PATCH_SIZE)
+    print("Test data was loaded\n")
+
+    print("Loading training data...")
+    train_data, train_answ = load_batch(phone, dped_dir, train_size, PATCH_SIZE)
+    print("Training data was loaded\n")
+
+    TEST_SIZE = test_data.shape[0]
+    num_test_batches = int(test_data.shape[0] / batch_size)
 
     print('Training network')
 
@@ -198,7 +200,7 @@ with tf.Graph().as_default(), tf.Session() as sess:
             logs_disc = "step %d, %s | discriminator accuracy | train: %.4g, test: %.4g" % \
                   (i, phone, train_acc_discrim, test_accuracy_disc)
 
-            logs_gen = "generator losses | train: %.4g, test: %.4g | content: %.4g, color: %.4g, texture: %.4g, tv: %.4g | psnr: %.4g, ssim: %.4g\n" % \
+            logs_gen = "generator losses | train: %.4g, test: %.4g | content: %.4g, color: %.4g, texture: %.4g, tv: %.4g | psnr: %.4g, ms-ssim: %.4g\n" % \
                   (train_loss_gen, test_losses_gen[0][0], test_losses_gen[0][1], test_losses_gen[0][2],
                    test_losses_gen[0][3], test_losses_gen[0][4], test_losses_gen[0][5], loss_ssim)
 
@@ -221,7 +223,7 @@ with tf.Graph().as_default(), tf.Session() as sess:
             idx = 0
             for crop in enhanced_crops:
                 before_after = np.hstack((np.reshape(test_crops[idx], [PATCH_HEIGHT, PATCH_WIDTH, 3]), crop))
-                misc.imsave('results/' + str(phone)+ "_" + str(idx) + '_iteration_' + str(i) + '.jpg', before_after)
+                imageio.imwrite('results/' + str(phone)+ "_" + str(idx) + '_iteration_' + str(i) + '.jpg', before_after)
                 idx += 1
 
             train_loss_gen = 0.0

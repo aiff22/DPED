@@ -1,12 +1,15 @@
 # python test_model.py model=iphone_orig dped_dir=dped/ test_subset=full iteration=all resolution=orig use_gpu=true
 
-from scipy import misc
+import imageio
+from PIL import Image
 import numpy as np
 import tensorflow as tf
 from models import resnet
 import utils
 import os
 import sys
+
+tf.compat.v1.disable_v2_behavior()
 
 # process command arguments
 phone, dped_dir, test_subset, iteration, resolution, use_gpu = utils.process_test_model_args(sys.argv)
@@ -18,16 +21,16 @@ res_sizes = utils.get_resolutions()
 IMAGE_HEIGHT, IMAGE_WIDTH, IMAGE_SIZE = utils.get_specified_res(res_sizes, phone, resolution)
 
 # disable gpu if specified
-config = tf.ConfigProto(device_count={'GPU': 0}) if use_gpu == "false" else None
+config = tf.compat.v1.ConfigProto(device_count={'GPU': 0}) if use_gpu == "false" else None
 
 # create placeholders for input images
-x_ = tf.placeholder(tf.float32, [None, IMAGE_SIZE])
+x_ = tf.compat.v1.placeholder(tf.float32, [None, IMAGE_SIZE])
 x_image = tf.reshape(x_, [-1, IMAGE_HEIGHT, IMAGE_WIDTH, 3])
 
 # generate enhanced image
 enhanced = resnet(x_image)
 
-with tf.Session(config=config) as sess:
+with tf.compat.v1.Session(config=config) as sess:
 
     test_dir = dped_dir + phone.replace("_orig", "") + "/test_data/full_size_test_images/"
     test_photos = [f for f in os.listdir(test_dir) if os.path.isfile(test_dir + f)]
@@ -39,7 +42,7 @@ with tf.Session(config=config) as sess:
     if phone.endswith("_orig"):
 
         # load pre-trained model
-        saver = tf.train.Saver()
+        saver = tf.compat.v1.train.Saver()
         saver.restore(sess, "models_orig/" + phone)
 
         for photo in test_photos:
@@ -47,7 +50,8 @@ with tf.Session(config=config) as sess:
             # load training image and crop it if necessary
 
             print("Testing original " + phone.replace("_orig", "") + " model, processing image " + photo)
-            image = np.float16(misc.imresize(misc.imread(test_dir + photo), res_sizes[phone])) / 255
+            image = np.float16(np.array(Image.fromarray(imageio.imread(test_dir + photo))
+                                        .resize([res_sizes[phone][1], res_sizes[phone][0]]))) / 255
 
             image_crop = utils.extract_crop(image, resolution, phone, res_sizes)
             image_crop_2d = np.reshape(image_crop, [1, IMAGE_SIZE])
@@ -62,8 +66,8 @@ with tf.Session(config=config) as sess:
 
             # save the results as .png images
 
-            misc.imsave("visual_results/" + phone + "_" + photo_name + "_enhanced.png", enhanced_image)
-            misc.imsave("visual_results/" + phone + "_" + photo_name + "_before_after.png", before_after)
+            imageio.imwrite("visual_results/" + phone + "_" + photo_name + "_enhanced.png", enhanced_image)
+            imageio.imwrite("visual_results/" + phone + "_" + photo_name + "_before_after.png", before_after)
 
     else:
 
@@ -77,7 +81,7 @@ with tf.Session(config=config) as sess:
         for i in iteration:
 
             # load pre-trained model
-            saver = tf.train.Saver()
+            saver = tf.compat.v1.train.Saver()
             saver.restore(sess, "models/" + phone + "_iteration_" + str(i) + ".ckpt")
 
             for photo in test_photos:
@@ -85,7 +89,8 @@ with tf.Session(config=config) as sess:
                 # load training image and crop it if necessary
 
                 print("iteration " + str(i) + ", processing image " + photo)
-                image = np.float16(misc.imresize(misc.imread(test_dir + photo), res_sizes[phone])) / 255
+                image = np.float16(np.array(Image.fromarray(imageio.imread(test_dir + photo))
+                                            .resize([res_sizes[phone][1], res_sizes[phone][0]]))) / 255
 
                 image_crop = utils.extract_crop(image, resolution, phone, res_sizes)
                 image_crop_2d = np.reshape(image_crop, [1, IMAGE_SIZE])
@@ -100,5 +105,5 @@ with tf.Session(config=config) as sess:
 
                 # save the results as .png images
 
-                misc.imsave("visual_results/" + phone + "_" + photo_name + "_iteration_" + str(i) + "_enhanced.png", enhanced_image)
-                misc.imsave("visual_results/" + phone + "_" + photo_name + "_iteration_" + str(i) + "_before_after.png", before_after)
+                imageio.imwrite("visual_results/" + phone + "_" + photo_name + "_iteration_" + str(i) + "_enhanced.png", enhanced_image)
+                imageio.imwrite("visual_results/" + phone + "_" + photo_name + "_iteration_" + str(i) + "_before_after.png", before_after)

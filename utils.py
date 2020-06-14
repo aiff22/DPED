@@ -5,14 +5,17 @@ import sys
 
 from functools import reduce
 
+
 def log10(x):
-  numerator = tf.log(x)
-  denominator = tf.log(tf.constant(10, dtype=numerator.dtype))
+  numerator = tf.compat.v1.log(x)
+  denominator = tf.compat.v1.log(tf.constant(10, dtype=numerator.dtype))
   return numerator / denominator
+
 
 def _tensor_size(tensor):
     from operator import mul
     return reduce(mul, (d.value for d in tensor.get_shape()[1:]), 1)
+
 
 def gauss_kernel(kernlen=21, nsig=3, channels=1):
     interval = (2*nsig+1.)/(kernlen)
@@ -25,9 +28,11 @@ def gauss_kernel(kernlen=21, nsig=3, channels=1):
     out_filter = np.repeat(out_filter, channels, axis = 2)
     return out_filter
 
+
 def blur(x):
     kernel_var = gauss_kernel(21, 3, 3)
     return tf.nn.depthwise_conv2d(x, kernel_var, [1, 1, 1, 1], padding='SAME')
+
 
 def process_command_args(arguments):
 
@@ -159,6 +164,7 @@ def process_test_model_args(arguments):
 
     return phone, dped_dir, test_subset, iteration, resolution, use_gpu
 
+
 def get_resolutions():
 
     # IMAGE_HEIGHT, IMAGE_WIDTH
@@ -178,6 +184,7 @@ def get_resolutions():
 
     return res_sizes
 
+
 def get_specified_res(res_sizes, phone, resolution):
 
     if resolution == "orig":
@@ -190,6 +197,7 @@ def get_specified_res(res_sizes, phone, resolution):
     IMAGE_SIZE = IMAGE_WIDTH * IMAGE_HEIGHT * 3
 
     return IMAGE_HEIGHT, IMAGE_WIDTH, IMAGE_SIZE
+
 
 def extract_crop(image, resolution, phone, res_sizes):
 
