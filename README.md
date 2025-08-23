@@ -2,14 +2,14 @@
 
 <br/>
 
-<img src="http://people.ee.ethz.ch/~ihnatova/assets/img/teaser_git.jpg"/>
+<img src="https://aiff22.github.io/assets/img/teaser_git.jpg"/>
 
 <br/>
 
-#### 1. Overview [[Paper]](https://arxiv.org/pdf/1704.02470.pdf) [[Project webpage]](http://people.ee.ethz.ch/~ihnatova/) [[Enhancing RAW photos]](https://github.com/aiff22/PyNET) [[Rendering Bokeh Effect]](https://github.com/aiff22/PyNET-Bokeh)
+#### 1. Overview [[Paper]](https://arxiv.org/pdf/1704.02470.pdf) [[Project webpage]](https://aiff22.github.io/) [[Enhancing RAW photos]](https://github.com/aiff22/PyNET) [[Rendering Bokeh Effect]](https://github.com/aiff22/PyNET-Bokeh)
 
 The provided code implements the paper that presents an end-to-end deep learning approach for translating ordinary photos from smartphones into DSLR-quality images. The learned model can be applied to photos of arbitrary resolution, while the methodology itself is generalized to 
-any type of digital camera. More visual results can be found [here](http://people.ee.ethz.ch/~ihnatova/#demo).
+any type of digital camera. More visual results can be found [here](https://aiff22.github.io/#demo).
 
 
 #### 2. Prerequisites
@@ -21,8 +21,8 @@ any type of digital camera. More visual results can be found [here](http://peopl
 
 #### 3. First steps
 
-- Download the pre-trained [VGG-19 model](https://polybox.ethz.ch/index.php/s/7z5bHNg5r5a0g7k) <sup>[Mirror](https://drive.google.com/file/d/0BwOLOmqkYj-jMGRwaUR2UjhSNDQ/view?usp=sharing&resourcekey=0-Ff-0HUQsoKJxZ84trhsHpA)</sup> and put it into `vgg_pretrained/` folder
-- Download [DPED dataset](http://people.ee.ethz.ch/~ihnatova/#dataset) (patches for CNN training) and extract it into `dped/` folder.  
+- Download the pre-trained [VGG-19 model](https://download.ai-benchmark.com/s/CCDiWM2sE25x2dW/download/imagenet-vgg-verydeep-19.mat) and put it into `vgg_pretrained/` folder
+- Download [DPED dataset](https://aiff22.github.io/#dataset) (patches for CNN training) and extract it into `dped/` folder.  
 <sub>This folder should contain three subolders: `sony/`, `iphone/` and `blackberry/`</sub>
 
 <br/>
